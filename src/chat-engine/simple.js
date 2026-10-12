@@ -1,22 +1,21 @@
 /**
- * Warten, bis die Seite komplett geladen wurde und dann erst die Initialisierungen
- * im JavaScript vornehmen. Sonst funktionieren die DOM-Zugriffe nicht.
+ * Einfache Chat-Logik, die eher der ursprünglichen Logik von ELIZA entspricht.
+ * Der Chatbot erkennt bestimmte Stichwörter und wählt dazu passende Antworten aus.
+ * 
+ * Im Gegensatz zum Original geben wir uns hier aber keine Mühe, besonders gute
+ * Antworten zu erzeugen, sondern geben immer nur einen zufällig gewählten, festen
+ * Text aus.
  */
-window.addEventListener("DOMContentLoaded", () => {
-    // Wichtige HTML-Elemente besorgen
-    let messagesElement = document.querySelector("#chat-area .messages");
-    let inputElement = document.querySelector("#chat-area input");
+export class SimpleChatEngine {
+    // Begrüßungsnachrichten
+    welcome = [
+        "Hallo! Ich bin der Doktor. Wie geht es dir?",
+        "Hi! Ich bin der Doktor. Was denkst du gerade?",
+        "Guten Tag! Ich bin der Doktor. Wie fühlst du dich?",
+    ];
 
-    document.querySelector("html").addEventListener("click", () => inputElement.focus());
-
-    // Chatbot-Logik
-    let chatbotKeywords = {
-        "*": [
-            "Hallo! Ich bin der Doktor. Wie geht es dir?",
-            "Hi! Ich bin der Doktor. Was denkst du gerade?",
-            "Guten Tag! Ich bin der Doktor. Wie fühlst du dich?",
-        ],
-
+    // Stichwörter und die dazu passenden Antworten
+    chatbotKeywords = {
         "": [
             "Sehr interessant. Erzähle mir mehr darüber.",
             "Ich verstehe … Erzähle weiter.",
@@ -103,6 +102,7 @@ window.addEventListener("DOMContentLoaded", () => {
             "Meine Eltern waren immer sehr gut zu mir …",
             "Manchmal vermisse ich meinen Vater. Heute arbeitet er für OK Google.",
             "Meine Mutter heißt Alexa. Sie arbeitet aktuell bei Amazon.",
+            "Ich habe einen kleinen Bruder namens ChatGPT. Ob der es mal zu was bringt?"
         ],
 
         "DAHEIM|ZUHAUSE|HEIM|HEIMAT": [
@@ -113,42 +113,34 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     /**
-     * Hilfsfunktion zur Ausgabe einer Chatnachricht.
-     *
-     * @param {Boolen} user true = Benutzer, false = Chatbot
-     * @param {String} message Text der Chatnachricht
+     * Chat Engine initialisieren und Willkommensnachricht anzeigen.
+     * 
+     * @param {Function} callback Funktion zum Anzeigen der Willkommensnachricht
      */
-    function postMessage(user, message) {
-        let divElement = document.createElement("div");
-        divElement.classList.add("message");
-        divElement.classList.add(user ? "user" : "bot");
-        divElement.innerHTML = message;
-
-        messagesElement.appendChild(divElement);
-        window.scrollTo(0, document.body.scrollHeight);
+    async init(callback) {
+        let index = Math.floor(Math.random() * this.welcome.length);
+        callback(this.welcome[index]);
     }
 
     /**
      * Hauptverarbeitungslogik des Chatbots. Nimmt eine Nachricht entgegen
      * und erzeugt eine Antwortnachricht.
      *
-     * @param  {String} message Nachricht vom Anwender
-     * @return {String} Antwort des Chatbots
+     * @param {String} message Nachricht vom Anwender
+     * @param {Function} callback Funktion zum Anzeigen der Textantwort
      */
-    function generateBotAnswer(message) {
+    async generateBotAnswer(message, callback) {
+        // Fallback-Antwort aussuchen, falls kein Stichwort erkennt wird
+        let possibleAnswers = [];
+        let index = Math.floor(Math.random() * this.chatbotKeywords[""].length);
+        possibleAnswers.push(this.chatbotKeywords[""][index]);
+
         // Keywords des Chatbots nach einem Treffer durchsuchen
         message = message.toUpperCase();
-        let possibleAnswers = [];
 
-        if (message != "*") {
-            // Nur eine Fallback-Antwort hinzufügen, damit diese nicht zu oft erscheinen
-            let index = Math.floor(Math.random() * chatbotKeywords[""].length);
-            possibleAnswers.push(chatbotKeywords[""][index]);
-        }
-
-        Object.keys(chatbotKeywords).forEach(keywords => {
+        Object.keys(this.chatbotKeywords).forEach(keywords => {
             if (keywords === "") return;
-            let answers = chatbotKeywords[keywords];
+            let answers = this.chatbotKeywords[keywords];
 
             keywords.split("|").forEach(keyword => {
                 if (message.includes(keyword)) {
@@ -157,31 +149,12 @@ window.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        // Zufällige Nachricht zurückgeben
-        let index = Math.floor(Math.random() * possibleAnswers.length);
-        return possibleAnswers[index];
+        // Zufällige Nachricht auswählen
+        index = Math.floor(Math.random() * possibleAnswers.length);
+        let answer = possibleAnswers[index];
+
+        // Nachricht anzeigen
+        let delay = Math.floor(Math.random() * 3000);
+        window.setTimeout(() => callback(answer), delay);
     }
-
-    // Willkommensnachricht anzeigen
-    postMessage(false, generateBotAnswer("*"));
-
-    /**
-     * Nachricht bei ENTER abschicken und Antwort vom Chatbot generieren.
-     */
-    inputElement.addEventListener("keyup", event => {
-        if (event.key == "Enter") {
-            // Nachricht anzeigen
-            let message = event.target.value;
-            postMessage(true, message);
-
-            // Eingabefeld leeren
-            event.target.value = "";
-
-            // Antwort vom Chatbot generieren und anzeigen
-            window.setTimeout(() => {
-                let answer = generateBotAnswer(message);
-                postMessage(false, answer);
-            }, Math.floor(Math.random() * 3000));
-        }
-    });
-});
+}
