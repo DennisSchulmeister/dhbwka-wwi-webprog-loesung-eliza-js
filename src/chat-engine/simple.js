@@ -138,16 +138,16 @@ export class SimpleChatEngine {
         // Keywords des Chatbots nach einem Treffer durchsuchen
         message = message.toUpperCase();
 
-        Object.keys(this.chatbotKeywords).forEach(keywords => {
-            if (keywords === "") return;
+        for (let keywords of Object.keys(this.chatbotKeywords)) {
+            if (keywords === "") continue;
             let answers = this.chatbotKeywords[keywords];
 
-            keywords.split("|").forEach(keyword => {
+            for (let keyword of keywords.split("|")) {
                 if (message.includes(keyword)) {
                     possibleAnswers = possibleAnswers.concat(answers);
                 }
-            });
-        });
+            }
+        }
 
         // Zufällige Nachricht auswählen
         index = Math.floor(Math.random() * possibleAnswers.length);
