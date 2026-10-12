@@ -30,7 +30,7 @@ window.addEventListener("DOMContentLoaded", () => {
         divElement.innerHTML = md.render(message);
 
         messagesElement.appendChild(divElement);
-        window.scrollTo(0, document.body.scrollHeight);
+        messagesElement.scrollTop = messagesElement.scrollHeight;
 
         return divElement;
     }
@@ -49,14 +49,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
             // Eingabefeld leeren
             event.target.value = "";
-            event.target.classList.add("hidden");
+            event.target.disabled = true;
 
             // Antwortnachricht erzeugen und anzeigen
             let answerDiv = postMessage(false, "");
 
             let callback = text => {
                 answerDiv.innerHTML = md.render(text);
-                window.scrollTo(0, document.body.scrollHeight);
+                messagesElement.scrollTop = messagesElement.scrollHeight;
             }
 
             switch (userMessage.toUpperCase()) {
@@ -76,8 +76,8 @@ window.addEventListener("DOMContentLoaded", () => {
                     }
             }
 
-            // Eingabefeld wieder anzeigen
-            event.target.classList.remove("hidden");
+            // Eingabefeld wieder aktivieren
+            event.target.disabled = false;
             event.target.focus();
         }
     });

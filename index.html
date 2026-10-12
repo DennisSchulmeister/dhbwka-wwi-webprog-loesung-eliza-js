@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
     <head>
         <title>🤖 Eliza.js</title>
         <meta charset="utf-8" />
@@ -11,14 +11,10 @@
     </head>
     <body>
         <main id="chat-area">
-            <div class="banner">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
-            <div class="banner">Eliza.js – Chatten bis der Arzt kommt!</div>
-            <div class="banner">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div>
-        
-            <div class="messages"></div>
-            <input autofocus />
+            <h1>Eliza.js</h1>
+            
+            <div class="messages" role="log" aria-label="Chatnachrichten"></div>
+            <input autofocus aria-label="Nachricht" placeholder="Nachricht schreiben …" />
         </main>
-
-        <main id="page-content" class="hidden"></main>
     </body>
 </html>

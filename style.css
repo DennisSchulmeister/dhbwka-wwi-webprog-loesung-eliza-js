@@ -1,79 +1,135 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
-html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    height: 100%;
-    box-sizing: border-box;
-
-    scrollbar-width: none;
-
-    --green1: rgb(0, 145, 0);
-    --green2: rgb(0, 200, 0);
-    --grey: lightgrey;
-}
-
+/**
+ * Allgemeines
+ */
 html {
-    background-color: rgb(0, 15, 0);
-    color: var(--green1);
-    padding: 1em;
+    /* https://pixabay.com/photos/talk-vietnam-ho-guom-6520941/ */
+    background-image: url(background.jpg);
+    background-color: #f0f0f0;
+    background-size: cover;
+    background-position: center;
+
+    color: #202124;
+    font-family: system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
-html, code, input {
-    font-family: "VT323", monospace;
-    font-size: 16pt;
-    text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.3);
-}
-
-ul {
-    list-style-type: "– ";
+body {
+    margin: 0;
+    backdrop-filter: blur(40px);
 }
 
 .hidden {
     display: none;
 }
 
-a, a:visited {
-    color: var(--green1);
-    text-decoration: underline;
-    font-weight: bold;
-    cursor: pointer;
+h1 {
+    color: crimson;
+    text-shadow: 1px 1px 2px rgba(0,0,0, 0.5);
 }
 
-a:hover {
-    color: var(--green2);
+a {
+    color: #315dba;
 }
 
-nav {
-    margin-bottom: 1em;
+code {
+    font-size: 0.9em;
+    background: #f1f3f5;
+    border-radius: 0.25rem;
+    padding: 0.1rem 0.3rem;
 }
 
-.banner {
-    font-weight: bold;
-    color: var(--grey);
+pre {
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 1rem;
+    background: #f1f3f5;
+    border-radius: 0.75rem;
+}
+
+pre code {
+    padding: 0;
+}
+
+/**
+ * Chatnachrichten
+ */
+#chat-area {
+    box-sizing: border-box;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0,0,0, 0.25);
+
+    width: min(100%, 48rem);
+    height: 100vh;
+    height: 100dvh;
+    margin: 0 auto;
+    padding: 2em;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#chat-area h1 {
+    flex-shrink: 0;
+    margin: 0;
 }
 
 .messages {
-    margin-top: 1em;
+    flex: 1;
+
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 2em;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .message {
-    margin-bottom: 1em;
+    flex-shrink: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
-.message.bot {
-    font-weight: bold;
-}
-
-input,
 .message.user {
-    color: var(--green2);
+    align-self: flex-end;
+    max-width: 85%;
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
+    background: #f1f3f5;
 }
 
+.message > :first-child {
+    margin-top: 0;
+}
+
+.message > :last-child {
+    margin-bottom: 0;
+}
+
+/**
+ * Eingabefeld für neue Nachrichten
+ */
 input {
+    box-sizing: border-box;
+
+    flex-shrink: 0;
     width: 100%;
-    background: none;
-    border: none;
-    outline: none;
+    padding: 1rem;
+
+    border: 1px solid #d9dde3;
+    border-radius: 1rem;
+    
+    background: #fff;
+    box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 5%);
+
+    color: inherit;
+    font: inherit;
+}
+
+input::placeholder {
+    color: #68707c;
 }

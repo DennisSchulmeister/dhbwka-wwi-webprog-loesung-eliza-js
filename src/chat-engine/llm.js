@@ -1,6 +1,5 @@
-import {InterruptableStoppingCriteria} from "https://unpkg.com/@huggingface/transformers@4.3.1";
-import {TextStreamer}                  from "https://unpkg.com/@huggingface/transformers@4.3.1";
-import * as transformers               from "https://unpkg.com/@huggingface/transformers@4.3.1";
+import {TextStreamer}    from "https://unpkg.com/@huggingface/transformers@4.3.1";
+import * as transformers from "https://unpkg.com/@huggingface/transformers@4.3.1";
 
 /**
  * Chat-Logik auf Basis eines lokal ausgeführten, generativen Sprachmodells.
@@ -43,29 +42,10 @@ export class LLMChatEngine {
         try {
             let answer = "";
 
-            let stop = new InterruptableStoppingCriteria();
-            let maxSentences = Math.floor(Math.random() * 3) + 1;
-            let numSentences = 0;
-            let punctuation = /[.!?]/;
-
-            let handleText = text => {
-                if (text.match(punctuation)) {
-                    numSentences++;
-
-                    if (numSentences >= maxSentences) {
-                        stop.interrupt();
-                        text = text.split(punctuation)[0];
-                    }
-                }
-
-                answer += text;
-                callback(answer);
-            };
-
             let streamer = new TextStreamer(this.model.tokenizer, {
                 skip_prompt:         true,
                 skip_special_tokens: true,
-                callback_function:   handleText,
+                callback_function:   (text) => { answer += text; callback(answer); },
             });
     
             await this.model(message, {
@@ -73,7 +53,6 @@ export class LLMChatEngine {
                 temperature:        0.5,
                 repetition_penalty: 1.1,
                 streamer:           streamer,
-                stopping_criteria:  stop,
             });
         } catch (error) {
             console.error(error);
